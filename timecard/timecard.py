@@ -12,19 +12,22 @@ gDf = False
 #*********************************888
 def main():
     debug('hello, this program is a timecard')
-    createNew()
     global gDf
-    debug(gDf)
+    gDf = createNew()
 
+    
+    debug(gDf.to_string())
 
-    runTwo()
-    runTwo()
-
-def runTwo():
     run()
-    debug(gDf)
     run()
-    debug(gDf)
+    run()
+
+    while True:
+        try:
+            run()
+        except:
+            break
+
 
 def run():
     global gWorking
@@ -34,6 +37,7 @@ def run():
     else:
         inp = input('Enter Project Name to clock IN:')
         clockIn(project = inp)
+    debug(gDf.to_string())
 
 
 
@@ -42,14 +46,14 @@ def run():
 #project, in time, out time
 def createNew( data = [['Dev', datetime.datetime.now(), datetime.datetime.now()+datetime.timedelta(hours = 1)]] ):
     columns = ['Proj', 'In', 'Out']
-    global gDf
-    gDf = pd.DataFrame(data, columns = columns)
+    return pd.DataFrame(data, columns = columns)
 
 
 
 
 #*********************************888
-def clockIn(tTime = datetime.datetime.now(), project ='NA' ):
+def clockIn(project ='NA' ):
+    tTime = datetime.datetime.now()
     debug('clocking In')
     debug(tTime)
     global gWorking
@@ -57,26 +61,29 @@ def clockIn(tTime = datetime.datetime.now(), project ='NA' ):
         err('double clock in detected')
         err(gWorking)
     gWorking = True
-    addRow(project, tTime, tTime)
+    addRow(project = project, inTime = tTime)
 
 def addRow(project = 'NA' , inTime = datetime.datetime.now(), outTime = None):
     global gDf
-    gDf = pd.concat( [gDf, pd.DataFrame([project, inTime, outTime]) ])
+    gDf = pd.concat( [gDf, createNew(data = [[project, inTime, outTime]]) ], ignore_index=True)
 
 
 #*********************************888
-def clockOut(tTime = datetime.datetime.now() ):
+def clockOut( ):
+    tTime = datetime.datetime.now()
     debug('clocking Out')
     debug(tTime)
     global gWorking
     if gWorking ==False:
         err('double clock out detected')
     gWorking = False
-    #updateLastOut()
+    updateLastOut(tTime)
 
-def updateLastOut(outTime = datetime.datetime.now()):
+def updateLastOut(outTime):
     global gDf
-    gDf.loc[len(gDf.index)][Out] = outTime
+    debug(len(gDf.index))
+    debug(gDf.at[0, 'Out'])
+    gDf.at[len(gDf.index)-1, 'Out'] = outTime
 
 
 
