@@ -52,11 +52,27 @@ def updateGui():
         gWindow['project'].update(gDf.at[len(gDf.index)-1, 'Proj'] )            #current project name
         gWindow['time'].update('Time elapsed: ' + 
             str(getLastDiff(datetime.datetime.now())) )         #current working time
+        takeABreak()
     else:
         gWindow['prompt'].update('Enter Project Name Then Clock IN')
         gWindow['time'].update('Time elapsed: ')         #
     gWindow['report'].update(reportThisWeek())
 
+
+gLastBreak = datetime.datetime.now()
+gBreakWindow = False
+def takeABreak():    
+    global gLastBreak
+    global gBreakWindow
+    breakIntervalMin=0
+    if ( (datetime.datetime.now() - gLastBreak) > datetime.timedelta(minutes=breakIntervalMin,seconds=3) ):
+        gLastBreak = datetime.datetime.now()
+        if (gBreakWindow): gBreakWindow.close()
+        layout = [
+            [sg.Text("Its been {} Minutes, Take a break".format(breakIntervalMin) )    ]   ,  
+        ]
+        #gBreakWindow = sg.Popup("Its been {} Minutes, Take a break".format(breakIntervalMin), keep_on_top=True)
+        gBreakWindow = sg.Window("Its been {} Minutes, Take a break".format(breakIntervalMin), layout, keep_on_top=True, finalize=True)
 
 
 
@@ -69,7 +85,7 @@ def main():
 
     global gWindow
     while True:
-        event, values = gWindow.read()
+        event, values = gWindow.read(timeout = 1000)
         if event == "CLK IN":
             clockIn(values['project'])
         elif event == "CLK OUT":
@@ -90,6 +106,8 @@ def main():
 #*********************************
 def clockIn(project ='NA' ):
     tTime = datetime.datetime.now()
+    global gLastBreak
+    gLastBreak = tTime
     debug('clocking In')
     debug(tTime)
     global gWorking
