@@ -1,11 +1,9 @@
 #!/usr/bin/env python
-import numpy as np
+
 import datetime
 import time
 import pandas as pd
-from os import sys
 
-import keyboard
 
 import PySimpleGUI as sg
 
@@ -37,7 +35,7 @@ def init():
         [sg.Text('Time elapsed: ', key='time')], 
         [sg.Button("CLK OUT",key="CLK OUT", disabled=not gWorking)],
         [sg.Button("Refresh")],
-        [sg.Text("", key= 'report')], 
+        [sg.Text("", font = ("Courier", 11), key= 'report')], 
     ]    
     gWindow = sg.Window("Demo", layout, finalize=True)
 
@@ -121,7 +119,7 @@ def clockOut( ):
 
 def reportThisWeek(start_date = datetime.date.today(), end_date = datetime.date.today()+ datetime.timedelta(days = 1)):
     start_date = datetime.date.today()
-    returnme = ""
+    returnme = "WEEKLY REPORT:\n"
     for x in range(6):
         start_date = datetime.date.today() - datetime.timedelta(days = x)
         end_date = start_date + datetime.timedelta(days = 1)
@@ -129,7 +127,7 @@ def reportThisWeek(start_date = datetime.date.today(), end_date = datetime.date.
         dailyResult  = report(start_date =start_date, end_date =  end_date)
 
         if dailyResult[0]:
-            returnme = returnme+ start_date.strftime("%D") + "\n" + str(dailyResult[1]) + "\n"
+            returnme =  returnme+"\n"+ start_date.strftime("%D") + "\n" + dailyResult[1].to_markdown(index=False) + "\n"
     msg('******************')
     return returnme
 
