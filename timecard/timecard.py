@@ -64,7 +64,7 @@ gBreakWindow = False
 def takeABreak():    
     global gLastBreak
     global gBreakWindow
-    breakIntervalMin=0
+    breakIntervalMin=30
     if ( (datetime.datetime.now() - gLastBreak) > datetime.timedelta(minutes=breakIntervalMin,seconds=3) ):
         gLastBreak = datetime.datetime.now()
         if (gBreakWindow): gBreakWindow.close()
@@ -141,12 +141,12 @@ def reportThisWeek(start_date = datetime.date.today(), end_date = datetime.date.
     for x in range(6):
         start_date = datetime.date.today() - datetime.timedelta(days = x)
         end_date = start_date + datetime.timedelta(days = 1)
-        msg('******************')
+        #msg('******************')
         dailyResult  = report(start_date =start_date, end_date =  end_date)
 
         if dailyResult[0]:
             returnme =  returnme+"\n"+ start_date.strftime("%D") + "\n" + dailyResult[1].to_markdown(index=False) + "\n"
-    msg('******************')
+    #msg('******************')
     return returnme
 
 
@@ -154,7 +154,7 @@ def report(start_date = datetime.date.today(), end_date = datetime.date.today()+
     start_datetime = pd.to_datetime(start_date, format = "%Y-%m-%d")
     end_datetime = pd.to_datetime(end_date,  format = "%Y-%m-%d")
 
-    msg('from ' + str(start_datetime) +' to ' + str(end_datetime) + ' you worked these hours:')
+    #msg('from ' + str(start_datetime) +' to ' + str(end_datetime) + ' you worked these hours:')
     global gDf
 
     inDatetimes = pd.to_datetime(gDf.loc[:,'In'], format = "%Y-%m-%d %H:%M:%S")
@@ -164,10 +164,10 @@ def report(start_date = datetime.date.today(), end_date = datetime.date.today()+
         df2 = gDf.loc[mask]
         #debug(df2)
         dff = df2.groupby(["Proj"]).Diff.sum().reset_index()
-        msg(dff)
+        #msg(dff)
         return [True, dff]
     else:
-        msg('No work from ' + str(start_datetime) +' to ' + str(end_datetime))
+        #msg('No work from ' + str(start_datetime) +' to ' + str(end_datetime))
         return [False]
 
 
