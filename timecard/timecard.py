@@ -258,7 +258,8 @@ def writeCsvFile(fileName = './card.csv'):
 #Printing and debugging
 #*********************************
 def debug(str =""):
-    print(str, flush=True)
+    return
+    #print(str, flush=True)
 def msg(str = ''):
     print(str, flush=True)
 def err(str =""):
